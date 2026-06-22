@@ -42,10 +42,18 @@ jobs:
           restore-keys: |
             buildozer-${{ runner.os }}-
 
+      # НОВЫЙ ШАГ: Автоматически принимаем все лицензии Android SDK
+      - name: Accept Android SDK Licenses
+        run: |
+          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+          echo -e "247a1c1766904d215a1d06a35503f2c190d68ff4\n28a585741f41dd4476c1e83e0d39e16bc923fae4\n84831b9409646a54c52f247a32130368d3a61441\n601085b94cd77f6b54012e2d17cf03cb32948c10\n33b6a2b64bc07aa5e485121d1d646f8d3c528807" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          echo -e "8983081c3e52d198f1264be14d54175b304bc28d\ntcl-oauth" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+
       - name: Build debug APK
         run: |
           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-          buildozer android debug
+          # Добавляем флаг автоматического согласия прямо в вызов buildozer
+          buildozer yes android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
